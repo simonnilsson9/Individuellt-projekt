@@ -10,9 +10,13 @@ namespace Individuellt_projekt
         static void Main(string[] args)
         {            
             int loginAttempts = 0;
-            string[] users = new string[5] { "admin", "SuperAdmin", "Simon", "Anton", "Emm" };
-            int[] pinCode = new int[5] { 1111, 2222, 3333, 4444, 5555 };
-            
+            string[] users = new string[] { "admin", "SuperAdmin", "Simon", "Anton", "Emm" };
+            int[] pinCode = new int[] { 1111, 2222, 3333, 4444, 5555 };
+            string[] accounts = new string[] {"admin Sparkonto", "admin Lönekonto", "SuperAdmin Sparkonto", "SuperAdmin Lönekonto",
+            "Simon Sparkonto", "Simon Lönekonto", "Anton Sparkonto", "Anton Lönekonto", "Emm Sparkonto", "Emm Lönekonto"};
+            double[] money = new double[] { 100.5, 1000.5, 90.5, 945.70, 145.50, 1000.85, 153.60, 843.50, 120.5, 1250.5 };
+
+            int userIndex = 0; //Deklarerar för att kunna använda i både inlogg och metoder.
             bool loggedIn = false;            
             Console.WriteLine("Välkommen till banken!\n");
             while (true)
@@ -25,7 +29,7 @@ namespace Individuellt_projekt
                     Console.Write("Var god skriv in PIN-koden: ");
                     int pin = Convert.ToInt32(Console.ReadLine());
 
-                    int userIndex = Array.IndexOf(users, username);
+                    userIndex = Array.IndexOf(users, username);
 
                     if (userIndex >= 0 && pinCode[userIndex] == pin)
                     {
@@ -44,33 +48,119 @@ namespace Individuellt_projekt
                     }
 
                 }
+                Console.WriteLine("--------------MENY--------------");
                 Console.WriteLine("[1] Visa konton och saldo");
                 Console.WriteLine("[2] Överföring mellan konton");
                 Console.WriteLine("[3] Ta ut pengar");
                 Console.WriteLine("[4] Logga ut");
-                Console.WriteLine("Välj mellan menyval 1-4.");
+                Console.Write("Välj mellan menyval 1-4: ");
                 Int32.TryParse(Console.ReadLine(), out int menu);
 
                 switch (menu)
                 {
                     case 1:
+                        Console.Clear();
+                        CheckMoney(accounts, money, users[userIndex]);
+                        Console.WriteLine("\nTryck ENTER för att komma till menyn.");
+                        Console.ReadKey();
                         break;
                     case 2:
+                        TransferMoney(accounts, money, users[userIndex]);
+                        Console.WriteLine("\nTryck ENTER för att komma till menyn.");
+                        Console.ReadKey();
                         break;
                     case 3:
+                        WithdrawMoney();
+                        Console.WriteLine("\nTryck ENTER för att komma till menyn.");
+                        Console.ReadKey();
                         break;
                     case 4:
                         Console.Clear();
+                        Console.WriteLine($"Du har blivit utloggad...\n");
                         loggedIn = false;
                         loginAttempts = 0;
                         break;
                     default:
+                        Console.Clear();
+                        Console.WriteLine("Felaktig inmatning, du måste välja mellan menyval 1-4....");
                         break;
 
                 }
             }
+        }
+
+        public static void CheckMoney(string[] accounts, double[] money, string loggedInUser)
+        {            
+            Console.WriteLine($"Saldo för konton för användare {loggedInUser}:");
+            for (int i = 0; i < accounts.Length; i++)
+            {
+                if (accounts[i].StartsWith(loggedInUser))
+                {
+                    Console.WriteLine($"{accounts[i]} : {money[i]} kr");                                        
+                }
+            }
+        }
+        public static void TransferMoney(string[] accounts, double[] money, string loggedInUser)
+        {
+            CheckMoney(accounts, money, loggedInUser);
+
+            Console.Write($"Ange vilket konto som du vill föra över pengar från: ");
+            string fromAccount = Console.ReadLine();
+            int fromAccountIndex = -1;
+            int toAccountIndex = -1;
+            for (int i = 0; i < accounts.Length; i++)
+            {
+                if (accounts[i].StartsWith(loggedInUser) && accounts[i].Contains(fromAccount))
+                {
+                    fromAccountIndex = i;
+                }
+            }
+
+            if (fromAccountIndex < 0 || fromAccountIndex >= accounts.Length)
+            {
+                Console.WriteLine("Ogiltigt kontoval.");
+                return;
+            }
+
+            Console.Write("Ange vilket belopp du vill överföra: ");
+            double transferAmount = Convert.ToDouble(Console.ReadLine());
+            if (transferAmount <= 0)
+            {
+                Console.WriteLine("Felaktigt belopp att överföra.");
+                return; 
+            }
+
+            Console.Write("Ange vilket konto du vill föra över pengar till: ");
+            string toAccount = Console.ReadLine();
+            for (int i = 0; i < accounts.Length; i++)
+            {
+                if (accounts[i].StartsWith(loggedInUser) && accounts[i].Contains(toAccount))
+                {
+                    toAccountIndex = i;
+                }
+            }
+            if (toAccountIndex < 0 || toAccountIndex >= accounts.Length || toAccountIndex == fromAccountIndex) 
+            { 
+                Console.WriteLine("Felaktigt kontoval att överföra till.");
+            }
+
+            if (money[fromAccountIndex] >= transferAmount)
+            {
+                money[fromAccountIndex] -= transferAmount;
+                money[toAccountIndex] += transferAmount;
+                Console.WriteLine($"Överföringen av {transferAmount} kr lyckades.");                
+                CheckMoney(accounts, money, loggedInUser);
+            }
+            else
+            {
+                Console.WriteLine("Du har inte tillräckligt med pengar på kontot.");
+            }
             
 
         }
+        public static void WithdrawMoney()
+        {
+
+        }       
     }
 }
