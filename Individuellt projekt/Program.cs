@@ -36,7 +36,7 @@ namespace Individuellt_projekt
                         if (userIndex >= 0 && pinCode[userIndex] == pin)
                         {
                             loggedIn = true;
-                            Console.WriteLine("Inloggning lyckades! Du skickas vidare till menyn.\n");
+                            Console.WriteLine("Inloggning lyckades! Du skickas vidare till menyn.");
                         }
                         else
                         {
@@ -50,7 +50,7 @@ namespace Individuellt_projekt
                         }
 
                     }
-                    Console.WriteLine("--------------MENY--------------");
+                    Console.WriteLine("\n--------------MENY--------------");
                     Console.WriteLine("[1] Visa konton och saldo");
                     Console.WriteLine("[2] Överföring mellan konton");
                     Console.WriteLine("[3] Ta ut pengar");
@@ -74,7 +74,7 @@ namespace Individuellt_projekt
                             break;
                         case 3:
                             Console.Clear();
-                            WithdrawMoney(accounts, money, users[userIndex]);
+                            WithdrawMoney(accounts, money, users[userIndex], pinCode);
                             Console.WriteLine("\nTryck ENTER för att komma till menyn.");
                             Console.ReadKey();
                             break;
@@ -167,7 +167,7 @@ namespace Individuellt_projekt
             }
             
         }
-        public static void WithdrawMoney(string[] accounts, double[] money, string loggedInUser)
+        public static void WithdrawMoney(string[] accounts, double[] money, string loggedInUser, int[] pinCode)
         {
             CheckMoney(accounts, money, loggedInUser);
             Console.Write("Ange vilket konto du vill ta ut pengar ifrån: ");
@@ -197,9 +197,19 @@ namespace Individuellt_projekt
             }
             if (money[fromAccountIndex] >= transferAmount)
             {
-                money[fromAccountIndex] -= transferAmount;                
-                Console.WriteLine($"Du tog ut {transferAmount} kr.\n");                
-                CheckMoney(accounts, money, loggedInUser);
+                Console.Write("Var god skriv in PIN-koden igen: ");
+                int pin = Convert.ToInt32(Console.ReadLine());
+                int userIndex = Array.IndexOf(pinCode,pin);
+                if (userIndex >= 0 && pinCode[userIndex] == pin)
+                {
+                    money[fromAccountIndex] -= transferAmount;
+                    Console.WriteLine($"Du tog ut {transferAmount} kr.\n");
+                    CheckMoney(accounts, money, loggedInUser);
+                }
+                else
+                {
+                    Console.WriteLine("\nFel pinkod.");
+                }
             }
             else
             {
