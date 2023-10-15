@@ -36,9 +36,9 @@ namespace Individuellt_projekt
                         Console.Write("Var god skriv in PIN-koden: ");
                         int pin = Convert.ToInt32(Console.ReadLine());
 
-                        userIndex = Array.IndexOf(users, username); //Searchs for a index that compares if the username macthes to users. If it does, it returns 0 or more, otherwise -1. 
+                        userIndex = Array.IndexOf(users, username); //Searchs for a index that compares if the username macthes to users. If it does, it returns 0 otherwise -1. 
 
-                        if (userIndex >= 0 && pinCode[userIndex] == pin) //If previous returns 0 or more and pinCode matches what the user input was, the bool loggedIn becomes true and ends the while loop. 
+                        if (userIndex >= 0 && pinCode[userIndex] == pin) //If previous returns 0 and pinCode matches what the user input was, the bool loggedIn becomes true and ends the while loop. 
                         {
                             loggedIn = true;
                             loggedInPin= pin;
@@ -88,7 +88,7 @@ namespace Individuellt_projekt
                         case 4:
                             Console.Clear();
                             Console.WriteLine($"Du har blivit utloggad...\n");
-                            loggedIn = false; //Set the the bool to false so that the inner while loop resets. Also set the loginAttempts to 0, so new users can log in again. 
+                            loggedIn = false; //Set the the bool to false so that the inner while loop resets. Also set the loginAttempts to 0, so a different user can log in again. 
                             loginAttempts = 0;
                             loggedInPin = -1;
                             break;
